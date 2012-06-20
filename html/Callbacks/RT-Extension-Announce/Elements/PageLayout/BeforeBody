@@ -49,11 +49,17 @@
 <div id="announce">
 <table class="announce">
 %my $rows = 1;
-%while( my $ticket = $tickets->Next ){
+%#while( my $ticket = $tickets->Next ){
+%foreach my $ticket ( @tickets ){
   <tr><td class="announce_subject">
+% if( $show_ticket_links ){
   <a class="announce_subject"
      href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">
-  <% $ticket->Subject %></a></td>
+  <% $ticket->Subject %></a>
+% }else{
+  <% $ticket->Subject %>
+% }
+  </td>
   <td>
 <%perl>
   my $txns = $ticket->Transactions;
@@ -72,16 +78,18 @@
     $content .= chr(8230); # Ellipsis character
   }
 </%perl>
-<% $content %> <a href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">See Details</a>
+<% $content %>
+%if( $show_ticket_links){
+ (<a class="announcements_detail" href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">more</a>)
+%}
 </td></tr>
-% if( $rows == $ShowTickets && $tickets->Count > $ShowTickets ){
-%   # Tack on the more link
+% if( $rows == $ShowTickets && (scalar @tickets) > $ShowTickets ){
+%   # More announcements, initially hidden.
 <tr><td colspan=2 class="toggle_announcements">
 <a href='#' class="toggle_announcements" id="toggle_announcements">More Announcements</a>
 </td></tr>
 <tbody id="more_announcements">
 % }
-
 %$rows++;
 %}
 %if( $rows >= $ShowTickets ){
@@ -89,30 +97,73 @@
 %}
 </table></div>
 <%INIT>
-if ( not defined RT->Config->Get('RTAnnounceQueue') ){
-  $RT::Logger->error('No queue defined for Announce extension. Set $RTAnnounceQueue in RT_SiteConfig.pm');
-  return;
-}
 # Only display on Homepage
-warn $m->request_comp->path;
 return unless ( $m->request_comp->path =~ /^\/index.html$/ );
 
-my $queue = RT->Config->Get('RTAnnounceQueue');
-$queue =~ s/(['\\])/\\$1/g;
 my $Queue = RT::Queue->new( $session{'CurrentUser'} );
-$Queue->Load($queue);
+$Queue->Load('RTAnnounce');
 unless( $Queue->Id ){
-  $RT::Logger->error('Invalid queue ' . $queue . ' set for Announce extension.');
+  $RT::Logger->error('RTAnnounce queue not found for Announce extension. Did you run make initdb?');
   return;
 }
 
-my $tickets = RT::Tickets->new( $session{'CurrentUser'} );
-$tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
-$tickets->FromSQL("Queue = '$queue' AND ( Status = 'new' OR Status = 'open' )");
+my @tickets;
+
+# Get announce tickets.
+my $tickets = RT::Tickets->new( RT->SystemUser );
+$tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'ASC' );
+$tickets->FromSQL("Queue = 'RTAnnounce' AND ( Status = 'new' OR Status = 'open' )");
 return if $tickets->Count == 0;
+
+# Get groups for each ticket
+while( my $ticket = $tickets->Next ){
+
+  my $groups = $ticket->CustomFieldValues('Announcement Groups');
+
+  if( $groups->Count == 0 ){
+    # No groups defined, everyone sees announcement
+    push @tickets, $ticket;
+  }
+
+  my @groups;
+  while ( my $group = $groups->Next ){
+    push @groups, $group->Content;
+  }
+
+  foreach my $group_name ( @groups ){
+    my $group_obj = RT::Group->new(RT->SystemUser);
+    $group_obj->LoadUserDefinedGroup($group_name);
+
+    unless( $group_obj->Id && $group_obj->Name eq $group_name ){
+      $RT::Logger->error("$group_name is not a valid group. Not showing this announcement.");
+      next;
+    }
+
+    if ( $group_obj->HasMemberRecursively($session{'CurrentUser'}->PrincipalObj) ) {
+      # User can see this announcement.
+      push @tickets, $ticket;
+    }
+    else{
+      $RT::Logger->debug('Not showing announcement ticket ' . $ticket->Id
+        . ' to user ' . $session{'CurrentUser'}->Name . ' because they are not '
+        . 'in group ' . $group_name );
+    }
+  }
+}
+
+# Don't show links if users can't view the announce tickets.
+my $show_ticket_links = $tickets[0]->HasRight(
+                          Right     => 'ShowTicket',
+                          Principal => $session{'CurrentUser'} );
+
+unless( $show_ticket_links ){
+  $RT::Logger->debug('User ' . $session{'CurrentUser'}->Name . ' does not have '
+    . 'the ShowTicket right on the RTAnnounce queue and will not see links to '
+    . 'announcement tickets.');
+}
 
 </%INIT>
 <%ARGS>
 $ShowTickets => 2
-$MaxMessageLength => 300;
+$MaxMessageLength => 300
 </%ARGS>

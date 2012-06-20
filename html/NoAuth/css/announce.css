@@ -32,8 +32,22 @@ a.toggle_announcements:hover {
   text-decoration: none;
 }
 
+a.announcements_detail:link {
+  text-decoration: underline;
+}
+
+a.announcements_detail:visited {
+  text-decoration: underline;
+}
+
+a.announcements_detail:hover {
+  text-decoration: underline;
+}
+
 td.announce_subject {
   width: 25%;
+  color: red;
+  font-weight: bold;
 }
 
 a.announce_subject:link {
