@@ -1,0 +1,118 @@
+%# BEGIN BPS TAGGED BLOCK {{{
+%# 
+%# COPYRIGHT:
+%# 
+%# This software is Copyright (c) 2012 Best Practical Solutions, LLC
+%#                                          <sales@bestpractical.com>
+%# 
+%# (Except where explicitly superseded by other copyright notices)
+%# 
+%# 
+%# LICENSE:
+%# 
+%# This work is made available to you under the terms of Version 2 of
+%# the GNU General Public License. A copy of that license should have
+%# been provided with this software, but in any event can be snarfed
+%# from www.gnu.org.
+%# 
+%# This work is distributed in the hope that it will be useful, but
+%# WITHOUT ANY WARRANTY; without even the implied warranty of
+%# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%# General Public License for more details.
+%# 
+%# You should have received a copy of the GNU General Public License
+%# along with this program; if not, write to the Free Software
+%# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+%# 02110-1301 or visit their web page on the internet at
+%# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+%# 
+%# 
+%# CONTRIBUTION SUBMISSION POLICY:
+%# 
+%# (The following paragraph is not intended to limit the rights granted
+%# to you to modify and distribute this software under the terms of
+%# the GNU General Public License and is only of importance to you if
+%# you choose to contribute your changes and enhancements to the
+%# community by submitting them to Best Practical Solutions, LLC.)
+%# 
+%# By intentionally submitting any modifications, corrections or
+%# derivatives to this work, or any other work intended for use with
+%# Request Tracker, to Best Practical Solutions, LLC, you confirm that
+%# you are the copyright holder for those contributions and you grant
+%# Best Practical Solutions,  LLC a nonexclusive, worldwide, irrevocable,
+%# royalty-free, perpetual, license to use, copy, create derivative
+%# works based on those contributions, and sublicense and distribute
+%# those contributions and any derivatives thereof.
+%# 
+%# END BPS TAGGED BLOCK }}}
+
+<div id="announce">
+<table class="announce">
+%my $rows = 1;
+%while( my $ticket = $tickets->Next ){
+  <tr><td class="announce_subject">
+  <a class="announce_subject"
+     href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">
+  <% $ticket->Subject %></a></td>
+  <td>
+<%perl>
+  my $txns = $ticket->Transactions;
+  for my $type ( qw(Create Comment Correspond) ){
+      $txns->Limit( FIELD => 'Type', VALUE => $type );
+  }
+  $txns->OrderBy( FIELD => 'Created', ORDER => 'DESC' );
+  $txns->RowsPerPage(1);
+  my $content_obj = $txns->First->ContentObj;
+  my $content = $content_obj->Content;
+  if( length $content > $MaxMessageLength ){
+    $content = substr($content, 0, $MaxMessageLength);
+    # Try to break at a word boundary.
+    $content =~ s/^(.*)\b\w+$/$1/g;
+    $content =~ s/\s+$//g; # Remove trailing space
+    $content .= chr(8230); # Ellipsis character
+  }
+</%perl>
+<% $content %> <a href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">See Details</a>
+</td></tr>
+% if( $rows == $ShowTickets && $tickets->Count > $ShowTickets ){
+%   # Tack on the more link
+<tr><td colspan=2 class="toggle_announcements">
+<a href='#' class="toggle_announcements" id="toggle_announcements">More Announcements</a>
+</td></tr>
+<tbody id="more_announcements">
+% }
+
+%$rows++;
+%}
+%if( $rows >= $ShowTickets ){
+</tbody>
+%}
+</table></div>
+<%INIT>
+if ( not defined RT->Config->Get('RTAnnounceQueue') ){
+  $RT::Logger->error('No queue defined for Announce extension. Set $RTAnnounceQueue in RT_SiteConfig.pm');
+  return;
+}
+# Only display on Homepage
+warn $m->request_comp->path;
+return unless ( $m->request_comp->path =~ /^\/index.html$/ );
+
+my $queue = RT->Config->Get('RTAnnounceQueue');
+$queue =~ s/(['\\])/\\$1/g;
+my $Queue = RT::Queue->new( $session{'CurrentUser'} );
+$Queue->Load($queue);
+unless( $Queue->Id ){
+  $RT::Logger->error('Invalid queue ' . $queue . ' set for Announce extension.');
+  return;
+}
+
+my $tickets = RT::Tickets->new( $session{'CurrentUser'} );
+$tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
+$tickets->FromSQL("Queue = '$queue' AND ( Status = 'new' OR Status = 'open' )");
+return if $tickets->Count == 0;
+
+</%INIT>
+<%ARGS>
+$ShowTickets => 2
+$MaxMessageLength => 300;
+</%ARGS>

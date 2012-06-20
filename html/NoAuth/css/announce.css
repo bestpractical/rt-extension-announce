@@ -1,0 +1,47 @@
+#announce {
+  padding-top: 10px; # Keep from running into the menu on the right
+}
+
+table.announce {
+  background-color:#fcc;
+  width: 100%;
+  border-top-left-radius: 0.3em;
+  border-top-right-radius: 0.3em;
+  border-bottom-right-radius: 0.3em;
+  border-bottom-left-radius: 0.3em;
+  valign: top;
+}
+
+td.toggle_announcements {
+  text-align: center;
+}
+
+a.toggle_announcements:link {
+  font-weight: bold;
+  color: #000000;
+}
+
+a.toggle_announcements:visited {
+  font-weight: bold;
+  color: #000000;
+}
+
+a.toggle_announcements:hover {
+  font-weight: bold;
+  color: #808080;
+  text-decoration: none;
+}
+
+td.announce_subject {
+  width: 25%;
+}
+
+a.announce_subject:link {
+  color: red;
+  font-weight: bold;
+}
+
+a.announce_subject:visited {
+  color: red;
+  font-weight: bold;
+}
