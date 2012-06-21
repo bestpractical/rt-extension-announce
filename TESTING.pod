@@ -1,0 +1,105 @@
+=head1 Testing RT::Extension::Announce
+
+This document contains the test plan for the RT::Extension::Announce
+extension.
+
+=head1 Installation
+
+The extension should install with no errors. If you experience any errors
+during installtion, resolve them before testing as errors indicate the extension
+likely was not installed correctly.
+
+After installing, you should see one new RT queue and one new custom field.
+
+To confirm, log in as root or a user with admin privileges and do the
+following:
+
+=over
+
+=item 1.
+
+Go to Tools > Configuration > Queues. Confirm you see a queue
+called RTAnnounce.
+
+=item 2.
+
+Click on RTAnnounce, then click Ticket Custom Fields on the queue
+configuration page. Confirm the Selected Custom Fields section has an
+Announcement Groups custom field.
+
+=back
+
+If either of the above are missing, the 'make initdb' step was not
+run during the installation or it didn't run successfully. Resolve
+those issues before continuing.
+
+=head1 Creating Announcements
+
+As with any other queue, you'll need to create a group with permissions
+to create tickets in the RTAnnounce queue. For the remaining tests
+you'll need a user with permissions for that queue or an admin user
+like root. You'll also need access to a regular user to confirm
+what your users will see.
+
+The following confirm the extension is working. Multiple browsers
+can be helpful when testing as multiple users.
+
+=over
+
+=item 1.
+
+Create a new ticket in the RTAnnounce queue with no Announcement
+Group selected. Go to the RT homepage and confirm you see the
+announcement.
+
+=item 2.
+
+As the admin user, the announcement subjects should be links and you
+should see a 'more' link after the message content. Click the links to
+confirm you go to the announcement ticket.
+
+=item 3.
+
+Start to create another ticket in the RTAnnounce queue. Confirm
+you see groups from your RT instance in the Announcement Groups
+custom field on the create page.
+
+=item 4.
+
+Create the new ticket and select one or more groups when creating
+the ticket. Confirm a user in the selected group can see the announcement
+on the homepage.
+
+=item 5.
+
+Log in as a user not in one of the selected groups and confirm that
+user sees the first announcement with no group, but does not see the
+second announcement with groups selected. This user should not see
+the 'more' link and the announcement subject should not be a link.
+
+=item 6.
+
+Add one more announcement. The admin user should see a 'More Announcements'
+link at the bottom of the announcement box. Click the link to expand the
+announcement box.
+
+=item 7.
+
+Update the first announcement (comment or reply to the ticket). The
+announcements display should now show the first announcement at the top.
+
+=item 8.
+
+As the admin user, give the regular test user the ShowTicket right on
+the RTAnnounce queue (there are multiple ways to do this). That
+user should now see links in the announcements.
+
+=item 9.
+
+Resolve the first announcement ticket and confirm it is removed from the
+announcements list. With two active announcements, the admin user
+should no longer see the More Announcements link.
+
+=back
+
+=cut

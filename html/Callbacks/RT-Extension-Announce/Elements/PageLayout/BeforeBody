@@ -111,7 +111,7 @@ my @tickets;
 
 # Get announce tickets.
 my $tickets = RT::Tickets->new( RT->SystemUser );
-$tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'ASC' );
+$tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
 $tickets->FromSQL("Queue = 'RTAnnounce' AND ( Status = 'new' OR Status = 'open' )");
 return if $tickets->Count == 0;
 
