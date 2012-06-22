@@ -85,16 +85,21 @@ announcement box.
 
 =item 7.
 
-Update the first announcement (comment or reply to the ticket). The
+Reply to the first announcement with an update. The
 announcements display should now show the first announcement at the top.
 
 =item 8.
+
+Comment on the first announcement. Confirm the comment does not
+appear on the homepage.
+
+=item 9.
 
 As the admin user, give the regular test user the ShowTicket right on
 the RTAnnounce queue (there are multiple ways to do this). That
 user should now see links in the announcements.
 
-=item 9.
+=item 10.
 
 Resolve the first announcement ticket and confirm it is removed from the
 announcements list. With two active announcements, the admin user

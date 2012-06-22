@@ -48,18 +48,35 @@ so all users can see the message. You may want to display a banner during mainte
 an unscheduled outage to make sure the people fielding customer tickets know that
 something is going on.
 
+=head1 DETAILS
+
 When you install the extension, a new queue is created called RTAnnounce.
 To post an announcement, create a ticket in that queue.
-The extension displays the subject and most recent update on active tickets in the
-RTAnnounce queue. As the incident or maintenance progresses, just post
-the updates to the ticket and the announcement will be updated with the latest
-information. When the incident is over, resolve the ticket and the
+The extension displays on the RT homepage the subject and most recent correspondence
+on active tickets in the RTAnnounce queue. As the incident or maintenance progresses,
+just reply to the ticket and the announcement will be updated with the latest
+information.
+
+When multiple announcements are active, they are ordered by
+the last update time with the announcement with the most recent
+update coming first.
+
+When the incident is over, resolve the ticket and the
 announcement will be removed.
 
-The RTAnnounce queue has a group custom field which you can use to limit
-who will see an announcement. If you set no RT group, all users will see
-the announcement. If you set one or more groups, memebers of those groups
-will see it.
+Comments on announce tickets are not shown in the announcement. However,
+comments are visible on the ticket for users who have permission to view
+the full ticket. If you have multiple announcements, a new comment updates
+the last updated time and will move the announcement to the top of the list.
+
+=head1 ANNOUNCEMENT GROUPS
+
+The RTAnnounce queue has a custom field called 'Announcement Groups' which
+you can use to manage who will see an announcement. If you set no value, all
+users will see the announcement. If you set one or more RT groups, only memebers
+of those groups will see it.
+
+=head1 PERMISSIONS
 
 By default, the announements are static text. If you give
 users the ShowTicket right on the RTAnnounce queue, the announcements
@@ -69,6 +86,7 @@ truncated on the homepage.
 
 The RTAnnounce queue is a regular queue, so you can control access to creating
 announcements the same way you manage permissions on other queues.
+
 In addition to setting permissions, you may not
 want to send the typical 'ticket create' email messages, so you could change
 or customize the scrips that run or create new templates. If you send

@@ -49,7 +49,6 @@
 <div id="announce">
 <table class="announce">
 %my $rows = 1;
-%#while( my $ticket = $tickets->Next ){
 %foreach my $ticket ( @tickets ){
   <tr><td class="announce_subject">
 % if( $show_ticket_links ){
@@ -63,7 +62,7 @@
   <td>
 <%perl>
   my $txns = $ticket->Transactions;
-  for my $type ( qw(Create Comment Correspond) ){
+  for my $type ( qw(Create Correspond) ){
       $txns->Limit( FIELD => 'Type', VALUE => $type );
   }
   $txns->OrderBy( FIELD => 'Created', ORDER => 'DESC' );
@@ -100,7 +99,7 @@
 # Only display on Homepage
 return unless ( $m->request_comp->path =~ /^\/index.html$/ );
 
-my $Queue = RT::Queue->new( $session{'CurrentUser'} );
+my $Queue = RT::Queue->new( RT->SystemUser );
 $Queue->Load('RTAnnounce');
 unless( $Queue->Id ){
   $RT::Logger->error('RTAnnounce queue not found for Announce extension. Did you run make initdb?');
@@ -112,7 +111,10 @@ my @tickets;
 # Get announce tickets.
 my $tickets = RT::Tickets->new( RT->SystemUser );
 $tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
-$tickets->FromSQL("Queue = 'RTAnnounce' AND ( Status = 'new' OR Status = 'open' )");
+my @statuses = $Queue->ActiveStatusArray();
+@statuses = map {s/(['\\])/\\$1/g; "Status = '$_'"} @statuses;
+my $status_query = join(' OR ', @statuses );
+$tickets->FromSQL("Queue = 'RTAnnounce' AND ( $status_query )");
 return if $tickets->Count == 0;
 
 # Get groups for each ticket

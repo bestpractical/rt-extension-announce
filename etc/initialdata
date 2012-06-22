@@ -6,7 +6,7 @@
 @CustomFields = (
     {
         Name        => 'Announcement Groups',
-        Queue       => RTAnnounce,
+        Queue       => 'RTAnnounce',
         Type        => 'Select',
         Disabled    => 0,
         Description => 'Groups who can view individual announcements',
