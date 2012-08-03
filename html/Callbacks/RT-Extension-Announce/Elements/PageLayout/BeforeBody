@@ -153,6 +153,9 @@ while( my $ticket = $tickets->Next ){
   }
 }
 
+# Current user isn't in any groups that can see tickets.
+return if @tickets == 0;
+
 # Don't show links if users can't view the announce tickets.
 my $show_ticket_links = $tickets[0]->HasRight(
                           Right     => 'ShowTicket',
