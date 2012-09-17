@@ -19,6 +19,7 @@ no_index:
     - etc
     - html
     - inc
+    - t
 resources:
   license: http://opensource.org/licenses/gpl-license.php
-version: 0.01
+version: 0.03

@@ -100,7 +100,7 @@
 return unless ( $m->request_comp->path =~ /^\/index.html$/ );
 
 my $Queue = RT::Queue->new( RT->SystemUser );
-$Queue->Load('RTAnnounce');
+$Queue->Load($AnnounceQueue);
 unless( $Queue->Id ){
   $RT::Logger->error('RTAnnounce queue not found for Announce extension. Did you run make initdb?');
   return;
@@ -114,7 +114,7 @@ $tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
 my @statuses = $Queue->ActiveStatusArray();
 @statuses = map {s/(['\\])/\\$1/g; "Status = '$_'"} @statuses;
 my $status_query = join(' OR ', @statuses );
-$tickets->FromSQL("Queue = 'RTAnnounce' AND ( $status_query )");
+$tickets->FromSQL("Queue = '$AnnounceQueue' AND ( $status_query )");
 return if $tickets->Count == 0;
 
 # Get groups for each ticket
@@ -163,7 +163,7 @@ my $show_ticket_links = $tickets[0]->HasRight(
 
 unless( $show_ticket_links ){
   $RT::Logger->debug('User ' . $session{'CurrentUser'}->Name . ' does not have '
-    . 'the ShowTicket right on the RTAnnounce queue and will not see links to '
+    . "the ShowTicket right on the $AnnounceQueue queue and will not see links to "
     . 'announcement tickets.');
 }
 
@@ -171,4 +171,5 @@ unless( $show_ticket_links ){
 <%ARGS>
 $ShowTickets => 2
 $MaxMessageLength => 300
+$AnnounceQueue => RT->Config->Get('RTAnnounceQueue') || 'RTAnnounce'
 </%ARGS>

@@ -76,6 +76,15 @@ PERMISSIONS
     as a CC to the announcement queue. Then messages posted for announcement
     in RT will also be sent to the notification list.
 
+CONFIGURATION
+    You can change the name of the queue used for announcements. First edit
+    the RTAnnounce queue in RT and change its name to your new name. Add a
+    line to your RT_SiteConfig.pm to set that new value:
+
+        Set($RTAnnounceQueue, 'Custom Announce Name');
+
+    Then clear your mason cache and restart your server.
+
 AUTHOR
     Jim Brandt <jbrandt@bestpractical.com>
 

@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package RT::Extension::Announce;
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -94,6 +94,16 @@ announcement messages to an email list,
 you could create a list user in RT and add it as a CC to the announcement
 queue. Then messages posted for announcement in RT will also be sent to the
 notification list.
+
+=head1 CONFIGURATION
+
+You can change the name of the queue used for announcements. First edit the
+RTAnnounce queue in RT and change its name to your new name. Add a line
+to your RT_SiteConfig.pm to set that new value:
+
+    Set($RTAnnounceQueue, 'Custom Announce Name');
+
+Then clear your mason cache and restart your server.
 
 =head1 AUTHOR
 
