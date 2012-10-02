@@ -4,6 +4,9 @@ package RT::Extension::Announce;
 
 our $VERSION = '0.03';
 
+RT->AddJavaScript('announce.js');
+RT->AddStyleSheets('announce.css');
+
 =head1 NAME
 
 RT-Extension-Announce - Display announcements as a banner on RT pages.

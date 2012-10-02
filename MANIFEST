@@ -1,5 +1,4 @@
 etc/initialdata
-html/Callbacks/RT-Extension-Announce/Elements/Header/Head
 html/Callbacks/RT-Extension-Announce/Elements/PageLayout/BeforeBody
 html/NoAuth/css/announce.css
 html/NoAuth/js/announce.js
