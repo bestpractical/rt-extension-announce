@@ -11,3 +11,4 @@ pod2htm*.tmp
 *.swp
 /MYMETA.*
 /lib/RT/Extension/Announce/Test.pm
+/t/tmp
