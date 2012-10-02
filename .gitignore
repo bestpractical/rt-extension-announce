@@ -10,3 +10,4 @@ pod2htm*.tmp
 *.bak
 *.swp
 /MYMETA.*
+/lib/RT/Extension/Announce/Test.pm
