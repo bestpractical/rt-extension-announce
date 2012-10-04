@@ -122,14 +122,15 @@ while( my $ticket = $tickets->Next ){
 
   my $groups = $ticket->CustomFieldValues('Announcement Groups');
 
-  if( $groups->Count == 0 ){
-    # No groups defined, everyone sees announcement
-    push @tickets, $ticket;
-  }
-
   my @groups;
   while ( my $group = $groups->Next ){
     push @groups, $group->Content;
+  }
+
+  unless (@groups) {
+    # No groups defined, everyone sees announcement
+    push @tickets, $ticket;
+    next;
   }
 
   foreach my $group_name ( @groups ){
