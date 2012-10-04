@@ -117,9 +117,11 @@ my $status_query = join(' OR ', @statuses );
 $tickets->FromSQL("Queue = '$AnnounceQueue' AND ( $status_query )");
 return if $tickets->Count == 0;
 
+my $who = $session{CurrentUser}->Name;
+
 # Get groups for each ticket
 while( my $ticket = $tickets->Next ){
-
+  my $tid    = $ticket->id;
   my $groups = $ticket->CustomFieldValues('Announcement Groups');
 
   my @groups;
@@ -129,6 +131,7 @@ while( my $ticket = $tickets->Next ){
 
   unless (@groups) {
     # No groups defined, everyone sees announcement
+    RT->Logger->debug("Showing announcement #$tid to $who: not limited to any groups");
     push @tickets, $ticket;
     next;
   }
@@ -138,18 +141,20 @@ while( my $ticket = $tickets->Next ){
     $group_obj->LoadUserDefinedGroup($group_name);
 
     unless( $group_obj->Id && $group_obj->Name eq $group_name ){
-      $RT::Logger->error("$group_name is not a valid group. Not showing this announcement.");
+      $RT::Logger->error("Cannot find group '$group_name' for announcement #$tid (for $who)");
       next;
     }
 
     if ( $group_obj->HasMemberRecursively($session{'CurrentUser'}->PrincipalObj) ) {
       # User can see this announcement.
+      RT->Logger->debug("Showing announcement #$tid to $who: member of '$group_name'");
       push @tickets, $ticket;
     }
     else{
-      $RT::Logger->debug('Not showing announcement ticket ' . $ticket->Id
-        . ' to user ' . $session{'CurrentUser'}->Name . ' because they are not '
-        . 'in group ' . $group_name );
+      $RT::Logger->debug(
+          "Not showing announcement ticket #$tid to user $who "
+        . "because they are not in group $group_name"
+      );
     }
   }
 }
@@ -163,7 +168,7 @@ my $show_ticket_links = $tickets[0]->HasRight(
                           Principal => $session{'CurrentUser'} );
 
 unless( $show_ticket_links ){
-  $RT::Logger->debug('User ' . $session{'CurrentUser'}->Name . ' does not have '
+  $RT::Logger->debug("User $who does not have "
     . "the ShowTicket right on the $AnnounceQueue queue and will not see links to "
     . 'announcement tickets.');
 }
