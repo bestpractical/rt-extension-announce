@@ -51,7 +51,7 @@
 %my $rows = 1;
 %foreach my $ticket ( @tickets ){
   <tr><td class="announce_subject">
-% if( $show_ticket_links ){
+% if( $show_ticket_links{$ticket->Id} ){
   <a class="announce_subject"
      href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">
   <% $ticket->Subject %></a>
@@ -78,7 +78,7 @@
   }
 </%perl>
 <% $content %>
-%if( $show_ticket_links){
+%if( $show_ticket_links{$ticket->Id} ){
  (<a class="announcements_detail" href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">more</a>)
 %}
 </td></tr>
@@ -163,14 +163,17 @@ while( my $ticket = $tickets->Next ){
 return if @tickets == 0;
 
 # Don't show links if users can't view the announce tickets.
-my $show_ticket_links = $tickets[0]->HasRight(
-                          Right     => 'ShowTicket',
-                          Principal => $session{'CurrentUser'} );
-
-unless( $show_ticket_links ){
-  $RT::Logger->debug("User $who does not have "
-    . "the ShowTicket right on the $AnnounceQueue queue and will not see links to "
-    . 'announcement tickets.');
+my %show_ticket_links;
+foreach my $ticket ( @tickets ){
+    if ( $ticket->HasRight( Right     => 'ShowTicket',
+                            Principal => $session{'CurrentUser'} )){
+        $show_ticket_links{$ticket->Id} = 1;
+    }
+    else{
+        $RT::Logger->debug("User $who does not have "
+          . "the ShowTicket right for ticket " . $ticket->Id . "  and will not see links to "
+          . 'this announcement ticket.');
+    }
 }
 
 </%INIT>
