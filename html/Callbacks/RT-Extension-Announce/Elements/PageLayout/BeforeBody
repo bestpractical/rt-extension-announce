@@ -140,7 +140,7 @@ while( my $ticket = $tickets->Next ){
     my $group_obj = RT::Group->new(RT->SystemUser);
     $group_obj->LoadUserDefinedGroup($group_name);
 
-    unless( $group_obj->Id && $group_obj->Name eq $group_name ){
+    unless ($group_obj->Id) {
       $RT::Logger->error("Cannot find group '$group_name' for announcement #$tid (for $who)");
       next;
     }
