@@ -99,71 +99,15 @@
 # Only display on Homepage
 return unless ( $m->request_comp->path =~ /^\/index.html$/ );
 
-my $Queue = RT::Queue->new( RT->SystemUser );
-$Queue->Load($AnnounceQueue);
-unless( $Queue->Id ){
-  $RT::Logger->error('RTAnnounce queue not found for Announce extension. Did you run make initdb?');
-  return;
-}
-
-my @tickets;
-
-# Get announce tickets.
-my $tickets = RT::Tickets->new( RT->SystemUser );
-$tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
-my @statuses = $Queue->ActiveStatusArray();
-@statuses = map {s/(['\\])/\\$1/g; "Status = '$_'"} @statuses;
-my $status_query = join(' OR ', @statuses );
-$tickets->FromSQL("Queue = '$AnnounceQueue' AND ( $status_query )");
-return if $tickets->Count == 0;
-
-my $who = $session{CurrentUser}->Name;
-
-# Get groups for each ticket
-while( my $ticket = $tickets->Next ){
-  my $tid    = $ticket->id;
-  my $groups = $ticket->CustomFieldValues('Announcement Groups');
-
-  my @groups;
-  while ( my $group = $groups->Next ){
-    push @groups, $group->Content;
-  }
-
-  unless (@groups) {
-    # No groups defined, everyone sees announcement
-    RT->Logger->debug("Showing announcement #$tid to $who: not limited to any groups");
-    push @tickets, $ticket;
-    next;
-  }
-
-  foreach my $group_name ( @groups ){
-    my $group_obj = RT::Group->new(RT->SystemUser);
-    $group_obj->LoadUserDefinedGroup($group_name);
-
-    unless ($group_obj->Id) {
-      $RT::Logger->error("Cannot find group '$group_name' for announcement #$tid (for $who)");
-      next;
-    }
-
-    if ( $group_obj->HasMemberRecursively($session{'CurrentUser'}->PrincipalObj) ) {
-      # User can see this announcement.
-      RT->Logger->debug("Showing announcement #$tid to $who: member of '$group_name'");
-      push @tickets, $ticket;
-    }
-    else{
-      $RT::Logger->debug(
-          "Not showing announcement ticket #$tid to user $who "
-        . "because they are not in group $group_name"
-      );
-    }
-  }
-}
+my @tickets = RT::Extension::Announce::GetAnnouncements($session{CurrentUser});
 
 # Current user isn't in any groups that can see tickets.
 return if @tickets == 0;
 
 # Don't show links if users can't view the announce tickets.
 my %show_ticket_links;
+
+my $who = $session{CurrentUser}->Name;
 foreach my $ticket ( @tickets ){
     if ( $ticket->HasRight( Right     => 'ShowTicket',
                             Principal => $session{'CurrentUser'} )){
@@ -180,5 +124,4 @@ foreach my $ticket ( @tickets ){
 <%ARGS>
 $ShowTickets => 2
 $MaxMessageLength => 300
-$AnnounceQueue => RT->Config->Get('RTAnnounceQueue') || 'RTAnnounce'
 </%ARGS>

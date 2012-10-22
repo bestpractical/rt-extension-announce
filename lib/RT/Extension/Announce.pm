@@ -7,6 +7,83 @@ our $VERSION = '0.04';
 RT->AddJavaScript('announce.js');
 RT->AddStyleSheets('announce.css');
 
+sub GetAnnouncements {
+    my $current_user = shift;
+
+    my $AnnounceQueue = RT->Config->Get('RTAnnounceQueue') || 'RTAnnounce';
+    my $Queue = RT::Queue->new( RT->SystemUser );
+    $Queue->Load($AnnounceQueue);
+    unless ( $Queue->Id ) {
+        $RT::Logger->error(
+'RTAnnounce queue not found for Announce extension. Did you run make initdb?'
+        );
+        return;
+    }
+
+    my @tickets;
+
+    # Get announce tickets.
+    my $tickets = RT::Tickets->new( RT->SystemUser );
+    $tickets->OrderBy( FIELD => 'LastUpdated', ORDER => 'DESC' );
+    my @statuses = $Queue->ActiveStatusArray();
+    @statuses = map { s/(['\\])/\\$1/g; "Status = '$_'" } @statuses;
+    my $status_query = join( ' OR ', @statuses );
+    $tickets->FromSQL("Queue = '$AnnounceQueue' AND ( $status_query )");
+    return if $tickets->Count == 0;
+
+    my $who = $current_user->Name;
+
+    # Get groups for each ticket
+    while ( my $ticket = $tickets->Next ) {
+        my $tid    = $ticket->id;
+        my $groups = $ticket->CustomFieldValues('Announcement Groups');
+
+        my @groups;
+        while ( my $group = $groups->Next ) {
+            push @groups, $group->Content;
+        }
+
+        unless (@groups) {
+
+            # No groups defined, everyone sees announcement
+            RT->Logger->debug(
+                "Showing announcement #$tid to $who: not limited to any groups"
+            );
+            push @tickets, $ticket;
+            next;
+        }
+
+        foreach my $group_name (@groups) {
+            my $group_obj = RT::Group->new( RT->SystemUser );
+            $group_obj->LoadUserDefinedGroup($group_name);
+
+            unless ( $group_obj->Id ) {
+                $RT::Logger->error(
+"Cannot find group '$group_name' for announcement #$tid (for $who)"
+                );
+                next;
+            }
+
+            if ( $group_obj->HasMemberRecursively( $current_user->PrincipalObj )
+              )
+            {
+                # User can see this announcement.
+                RT->Logger->debug(
+"Showing announcement #$tid to $who: member of '$group_name'"
+                );
+                push @tickets, $ticket;
+            }
+            else {
+                $RT::Logger->debug(
+                        "Not showing announcement ticket #$tid to user $who "
+                      . "because they are not in group $group_name" );
+            }
+        }
+    }
+    return @tickets;
+}
+
+
 =head1 NAME
 
 RT-Extension-Announce - Display announcements as a banner on RT pages.
