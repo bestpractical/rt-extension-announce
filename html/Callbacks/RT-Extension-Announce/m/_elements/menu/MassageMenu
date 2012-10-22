@@ -1,0 +1,6 @@
+<%init>
+my @tickets = RT::Extension::Announce::GetAnnouncements($session{CurrentUser});
+return unless @tickets;
+unshift @{$ARGS{Menu}}, { label => loc("Announcements"), url => '/m/announcements', };
+</%init>
+
