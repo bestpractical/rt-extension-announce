@@ -52,7 +52,7 @@
 % for my $ticket ( @tickets ) {
 <li class="ticket">
 % if ( $show_ticket_links{$ticket->id} ) {
-<a class="ticket" href="<%RT->Config->Get('WebPath')%>/m/ticket/show?id=<%$ticket->id%>"><%$ticket->Subject%></a>
+<a href="<%RT->Config->Get('WebPath')%>/m/ticket/show?id=<%$ticket->id%>"><%$ticket->Subject%></a>
 % } else {
 <%$ticket->Subject%>
 % }
