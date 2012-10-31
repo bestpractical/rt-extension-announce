@@ -45,16 +45,16 @@
 %# those contributions and any derivatives thereof.
 %#
 %# END BPS TAGGED BLOCK }}}
-
+<link rel="stylesheet" href="<%RT->Config->Get('WebPath')%>/NoAuth/css/announce.css" type="text/css" />
 <&| _elements/wrapper, title => loc("Found [quant,_1,announcement]", scalar @tickets)&>
 <&|/Widgets/TitleBox, class => 'search' &>
-<ul class="ticketlist">
+<ul class="ticketlist announce">
 % for my $ticket ( @tickets ) {
 <li class="ticket">
 % if ( $show_ticket_links{$ticket->id} ) {
-<a href="<%RT->Config->Get('WebPath')%>/m/ticket/show?id=<%$ticket->id%>"><%$ticket->Subject%></a>
+<a class="announce_subject" href="<%RT->Config->Get('WebPath')%>/m/ticket/show?id=<%$ticket->id%>"><%$ticket->Subject%></a>
 % } else {
-<%$ticket->Subject%>
+<span class="announce_subject"><%$ticket->Subject%></span>
 % }
 <div class="meta">
 <%perl>

@@ -56,7 +56,7 @@ td.announce_subject {
   font-weight: bold;
 }
 
-a.announce_subject:link {
+a.announce_subject:link, span.announce_subject {
   color: red;
   font-weight: bold;
 }
@@ -64,4 +64,16 @@ a.announce_subject:link {
 a.announce_subject:visited {
   color: red;
   font-weight: bold;
+}
+
+ul.menu li:first-child {
+  background-color: #fcc;
+  margin-top: -1em;
+  padding-top: 1.4em; /* to fill the background for parent margin-top */
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+}
+
+ul.menu a.announce {
+  background-color: #fcc;
 }
