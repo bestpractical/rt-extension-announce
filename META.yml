@@ -22,4 +22,4 @@ no_index:
     - t
 resources:
   license: http://opensource.org/licenses/gpl-license.php
-version: 0.05
+version: 0.06
