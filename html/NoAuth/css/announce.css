@@ -77,3 +77,8 @@ ul.menu li:first-child {
 ul.menu a.announce {
   background-color: #fcc;
 }
+
+table.announce td.date {
+  font-size: smaller;
+  color: #777;
+}
