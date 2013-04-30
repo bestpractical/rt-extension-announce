@@ -107,6 +107,7 @@ Add these lines:
     Set(@Plugins, qw(RT::Extension::Announce));
     Set(@CustomFieldValuesSources, (qw(RT::CustomFieldValues::AnnounceGroups)));
     Set($ShowAnnouncementsInSelfService, 1); # display for selfservice home page too
+    Set(@AnnounceDefaultGroups, 'foo', 'bar'); # default groups on ticket creation
 
 or add C<RT::Extension::Announce> to your existing C<@Plugins> line.
 
