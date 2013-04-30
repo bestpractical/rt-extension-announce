@@ -97,7 +97,13 @@
 </table></div>
 <%INIT>
 # Only display on Homepage
-return unless ( $m->request_comp->path =~ /^\/index.html$/ );
+if ( RT->Config->Get('ShowAnnouncementsInSelfService') ) {
+    return
+      unless ( $m->request_comp->path =~ m{^/(?:SelfService/)?index\.html$} );
+}
+else {
+    return unless ( $m->request_comp->path =~ m{^/index\.html$} );
+}
 
 my @tickets = RT::Extension::Announce::GetAnnouncements($session{CurrentUser});
 

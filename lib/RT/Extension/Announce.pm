@@ -106,6 +106,7 @@ Add these lines:
 
     Set(@Plugins, qw(RT::Extension::Announce));
     Set(@CustomFieldValuesSources, (qw(RT::CustomFieldValues::AnnounceGroups)));
+    Set($ShowAnnouncementsInSelfService, 1); # display for selfservice home page too
 
 or add C<RT::Extension::Announce> to your existing C<@Plugins> line.
 
