@@ -63,15 +63,37 @@ sub ExternalValues {
 
     my @res;
     my $i = 0;
-    my $groups = RT::Groups->new( $self->CurrentUser );
-    $groups->LimitToUserDefinedGroups;
-    $groups->OrderByCols( { FIELD => 'Name' } );
-    while( my $group = $groups->Next ) {
-        push @res, {
-            name        => $group->Name,
-            description => $group->Description,
-            sortorder   => $i++,
-        };
+    my @groups = grep { defined } RT->Config->Get('AnnounceGroups');
+    if ( @groups ) {
+        for my $identifier ( @groups ) {
+            my $group = RT::Group->new($self->CurrentUser);
+            my ( $ret, $msg ) = $group->LoadUserDefinedGroup($identifier);
+            if ( $ret ) {
+                push @res,
+                  {
+                    name        => $group->Name,
+                    description => $group->Description,
+                    sortorder   => $i++,
+                  };
+            }
+            else {
+                RT->Logger->warn("Failed to load group $identifier: $msg");
+            }
+        }
+
+    }
+    else {
+        my $groups = RT::Groups->new( $self->CurrentUser );
+        $groups->LimitToUserDefinedGroups;
+        $groups->OrderByCols( { FIELD => 'Name' } );
+        while ( my $group = $groups->Next ) {
+            push @res,
+              {
+                name        => $group->Name,
+                description => $group->Description,
+                sortorder   => $i++,
+              };
+        }
     }
     return \@res;
 }

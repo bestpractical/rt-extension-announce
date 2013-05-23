@@ -185,6 +185,12 @@ to your RT_SiteConfig.pm to set that new value:
 
     Set($RTAnnounceQueue, 'Custom Announce Name');
 
+By default, all the user defined groups will be listed in "Announcement
+Groups", you can customize the group list by setting @AnnounceGroups in
+your RT_SiteConfig.pm:
+
+    Set(@AnnounceGroups, 'foo', 'bar', 'baz');
+
 Then clear your mason cache and restart your server.
 
 =head1 AUTHOR
