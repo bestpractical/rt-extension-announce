@@ -13,6 +13,7 @@ INSTALLATION
             Set(@Plugins, qw(RT::Extension::Announce));
             Set(@CustomFieldValuesSources, (qw(RT::CustomFieldValues::AnnounceGroups)));
             Set($ShowAnnouncementsInSelfService, 1); # display for selfservice home page too
+            Set(@AnnounceDefaultGroups, 'foo', 'bar'); # default groups on ticket creation
 
         or add "RT::Extension::Announce" to your existing @Plugins line.
 
@@ -83,6 +84,12 @@ CONFIGURATION
     line to your RT_SiteConfig.pm to set that new value:
 
         Set($RTAnnounceQueue, 'Custom Announce Name');
+
+    By default, all the user defined groups will be listed in "Announcement
+    Groups", you can customize the group list by setting @AnnounceGroups in
+    your RT_SiteConfig.pm:
+
+        Set(@AnnounceGroups, 'foo', 'bar', 'baz');
 
     Then clear your mason cache and restart your server.
 
