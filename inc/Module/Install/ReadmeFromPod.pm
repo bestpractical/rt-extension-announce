@@ -7,7 +7,7 @@ use warnings;
 use base qw(Module::Install::Base);
 use vars qw($VERSION);
 
-$VERSION = '0.18';
+$VERSION = '0.22';
 
 sub readme_from {
   my $self = shift;

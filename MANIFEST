@@ -2,6 +2,8 @@ etc/initialdata
 html/Callbacks/RT-Extension-Announce/Elements/PageLayout/BeforeBody
 html/Callbacks/RT-Extension-Announce/m/_elements/menu/MassageMenu
 html/m/announcements
+html/NoAuth/css/announce.css
+html/NoAuth/js/announce.js
 static/css/announce.css
 static/js/announce.js
 inc/Module/Install.pm

@@ -8,13 +8,13 @@ no warnings 'once';
 
 use Module::Install::Base;
 use base 'Module::Install::Base';
-our $VERSION = '0.30';
+our $VERSION = '0.32';
 
 use FindBin;
 use File::Glob     ();
 use File::Basename ();
 
-my @DIRS = qw(etc lib html bin sbin po var static);
+my @DIRS = qw(etc lib html static bin sbin po var);
 my @INDEX_DIRS = qw(lib bin sbin);
 
 sub RTx {
@@ -62,10 +62,11 @@ sub RTx {
     unshift @INC, "$RT::LocalPath/lib" if $RT::LocalPath;
     unshift @INC, $lib_path;
 
-    $RT::LocalVarPath  ||= $RT::VarPath;
-    $RT::LocalPoPath   ||= $RT::LocalLexiconPath;
-    $RT::LocalHtmlPath ||= $RT::MasonComponentRoot;
-    $RT::LocalLibPath  ||= "$RT::LocalPath/lib";
+    $RT::LocalVarPath    ||= $RT::VarPath;
+    $RT::LocalPoPath     ||= $RT::LocalLexiconPath;
+    $RT::LocalHtmlPath   ||= $RT::MasonComponentRoot;
+    $RT::LocalStaticPath ||= $RT::StaticPath;
+    $RT::LocalLibPath    ||= "$RT::LocalPath/lib";
 
     my $with_subdirs = $ENV{WITH_SUBDIRS};
     @ARGV = grep { /WITH_SUBDIRS=(.*)/ ? ( ( $with_subdirs = $1 ), 0 ) : 1 }
@@ -135,6 +136,7 @@ install ::
         $has_etc{acl}++;
     }
     if ( -e 'etc/initialdata' ) { $has_etc{initialdata}++; }
+    if ( -d 'etc/upgrade/' )    { $has_etc{upgrade}++; }
 
     $self->postamble("$postamble\n");
     unless ( $subdirs{'lib'} ) {
@@ -163,6 +165,12 @@ install ::
 .
         $self->postamble("initdb ::\n$initdb\n");
         $self->postamble("initialize-database ::\n$initdb\n");
+        if ($has_etc{upgrade}) {
+            print "To upgrade from a previous version of this extension, use 'make upgrade-database'\n";
+            my $upgradedb = qq|\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Minc::Module::Install -e"RTxInitDB(qw(upgrade \$(NAME) \$(VERSION)))"\n|;
+            $self->postamble("upgrade-database ::\n$upgradedb\n");
+            $self->postamble("upgradedb ::\n$upgradedb\n");
+        }
     }
 }
 
@@ -208,4 +216,4 @@ sub requires_rt {
 
 __END__
 
-#line 328
+#line 336
