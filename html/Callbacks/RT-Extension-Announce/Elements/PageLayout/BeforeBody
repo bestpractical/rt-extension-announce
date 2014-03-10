@@ -67,8 +67,7 @@
   }
   $txns->OrderBy( FIELD => 'Created', ORDER => 'DESC' );
   $txns->RowsPerPage(1);
-  my $content_obj = $txns->First->ContentObj;
-  my $content = $content_obj->Content;
+  my $content = $txns->First->Content(Type => 'text/plain');
   if( length $content > $MaxMessageLength ){
     $content = substr($content, 0, $MaxMessageLength);
     # Try to break at a word boundary.
