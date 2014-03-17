@@ -1,0 +1,9 @@
+Revision history for RT-Extension-TimeTracking
+
+0.07    2014-03-17
+        * Make compatible with RT 4.2 (thanks Lars Thegler)
+        * Make @AnnounceGroups configurable
+        * Add $ShowAnnouncementsInSelfService to show announcements on
+          Self Service pages
+        * Doc updates
+        * Access the plain text version of posts rather than HTML
