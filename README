@@ -1,6 +1,9 @@
 NAME
     RT-Extension-Announce - Display announcements as a banner on RT pages.
 
+RT VERSION
+    Works with RT 4.0 and 4.2.
+
 INSTALLATION
     perl Makefile.PL
     make
@@ -8,18 +11,22 @@ INSTALLATION
         May need root permissions
 
     Edit your /opt/rt4/etc/RT_SiteConfig.pm
-        Add these lines:
+        If you are using RT 4.2 or later, add this line:
 
-            Set(@Plugins, qw(RT::Extension::Announce));
-            Set(@CustomFieldValuesSources, (qw(RT::CustomFieldValues::AnnounceGroups)));
-            Set($ShowAnnouncementsInSelfService, 1); # display for selfservice home page too
-            Set(@AnnounceDefaultGroups, 'foo', 'bar'); # default groups on ticket creation
+            Plugin('RT::Extension::Announce');
 
         or add "RT::Extension::Announce" to your existing @Plugins line.
 
+        And add the following:
+
+            Set(@CustomFieldValuesSources, (qw(RT::CustomFieldValues::AnnounceGroups)));
+
+        See "CONFIGURATION" for more options.
+
     make initdb
         Run this in the install directory where you ran the previous make
-        commands.
+        commands. Only run for an initial install. Do not run when
+        upgrading.
 
     Clear your mason cache
             rm -rf /opt/rt4/var/mason_data/obj
@@ -79,19 +86,24 @@ PERMISSIONS
     in RT will also be sent to the notification list.
 
 CONFIGURATION
-    You can change the name of the queue used for announcements. First edit
-    the RTAnnounce queue in RT and change its name to your new name. Add a
-    line to your RT_SiteConfig.pm to set that new value:
+  $RTAnnounceQueue
+    Use this to change the name of the queue used for announcements. First
+    edit the RTAnnounce queue in RT and change its name to your new name.
+    Then a line to your RT_SiteConfig.pm to set that new value:
 
         Set($RTAnnounceQueue, 'Custom Announce Name');
 
-    By default, all the user defined groups will be listed in "Announcement
-    Groups", you can customize the group list by setting @AnnounceGroups in
-    your RT_SiteConfig.pm:
+  @AnnounceGroups
+    By default, all user defined groups will be listed in "Announcement
+    Groups". If you have a large number of groups in your RT, this can make
+    for a long list, so you can customize the group list by setting
+    @AnnounceGroups in your RT_SiteConfig.pm:
 
         Set(@AnnounceGroups, 'foo', 'bar', 'baz');
 
-    Then clear your mason cache and restart your server.
+  $ShowAnnouncementsInSelfService
+    Set this to true to show announcements on the self service page as well
+    as the regular privileged RT page.
 
 AUTHOR
     Jim Brandt <jbrandt@bestpractical.com>
