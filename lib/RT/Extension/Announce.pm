@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package RT::Extension::Announce;
 
-our $VERSION = '0.07';
+our $VERSION = '1.00';
 
 RT->AddJavaScript('announce.js');
 RT->AddStyleSheets('announce.css');
@@ -96,19 +96,23 @@ Works with RT 4.0 and 4.2.
 
 =over
 
-=item perl Makefile.PL
+=item C<perl Makefile.PL>
 
-=item make
+=item C<make>
 
-=item make install
+=item C<make install>
 
 May need root permissions
 
-=item Edit your /opt/rt4/etc/RT_SiteConfig.pm
+=item Edit your F</opt/rt4/etc/RT_SiteConfig.pm>
 
-If you are using RT 4.2 or later, add this line:
+If you are using RT 4.2 or greater, add this line:
 
     Plugin('RT::Extension::Announce');
+
+For RT 4.0, add this line:
+
+    Set(@Plugins, qw(RT::Extension::Announce));
 
 or add C<RT::Extension::Announce> to your existing C<@Plugins> line.
 
@@ -118,10 +122,15 @@ And add the following:
 
 See L</CONFIGURATION> for more options.
 
-=item make initdb
+=item C<make initdb>
 
-Run this in the install directory where you ran the previous make commands.
-Only run for an initial install. Do not run when upgrading.
+Only run this the first time you install this module.
+
+If you run this twice, you may end up with duplicate data
+in your database.
+
+If you are upgrading this module, check for upgrading instructions
+in case changes need to be made to your database.
 
 =item Clear your mason cache
 
@@ -213,18 +222,21 @@ the regular privileged RT page.
 
 =head1 AUTHOR
 
-Jim Brandt <jbrandt@bestpractical.com>
+Best Practical Solutions, LLC E<lt>modules@bestpractical.comE<gt>
 
 =head1 BUGS
 
-All bugs should be reported via
-L<http://rt.cpan.org/Public/Dist/Display.html?Name=RT-Extension-Announce>
-or bug-RT-Extension-Announce@rt.cpan.org.
+All bugs should be reported via email to
 
+    L<bug-RT-Extension-Announce@rt.cpan.org|mailto:bug-RT-Extension-Announce@rt.cpan.org>
+
+or via the web at
+
+    L<rt.cpan.org|http://rt.cpan.org/Public/Dist/Display.html?Name=RT-Extension-Announce>.
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2012 by Best Practical Solutions, LLC
+This software is Copyright (c) 2012-2014 by Best Practical Solutions, LLC
 
 This is free software, licensed under:
 

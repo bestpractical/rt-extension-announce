@@ -1,9 +1,8 @@
 use inc::Module::Install;
 
 RTx 'RT-Extension-Announce';
-all_from 'lib/RT/Extension/Announce.pm';
-readme_from 'lib/RT/Extension/Announce.pm';
-license  'gplv2';
+
+repository('https://github.com/bestpractical/rt-extension-announce');
 
 my ($lp) = ($INC{'RT.pm'} =~ /^(.*)[\\\/]/);
 my $lib_path = join( ' ', "$RT::LocalPath/lib", $lp );
