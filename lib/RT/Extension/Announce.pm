@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package RT::Extension::Announce;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 RT->AddJavaScript('announce.js');
 RT->AddStyleSheets('announce.css');
@@ -90,7 +90,7 @@ RT-Extension-Announce - Display announcements as a banner on RT pages.
 
 =head1 RT VERSION
 
-Works with RT 4.0 and 4.2.
+Works with RT 4.0, 4.2 and 4.4.
 
 =head1 INSTALLATION
 
