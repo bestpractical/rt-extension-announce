@@ -67,7 +67,10 @@
   }
   $txns->OrderBy( FIELD => 'Created', ORDER => 'DESC' );
   $txns->RowsPerPage(1);
-  my $content = $txns->First->Content(Type => 'text/plain');
+
+  my $show_html = RT::Config->Get('RTAnnounceAllowHTML') || 0;
+  my $content = $show_html ? $txns->First->Content(Type => 'text/html') : $txns->First->Content(Type => 'text/plain');
+
   if( length $content > $MaxMessageLength ){
     $content = substr($content, 0, $MaxMessageLength);
     # Try to break at a word boundary.
@@ -76,7 +79,11 @@
     $content .= chr(8230); # Ellipsis character
   }
 </%perl>
-<% $content %>
+% if ( $show_html ) {
+  <% $content |n %>
+% } else {
+  <% $content %>
+% }
 %if( $show_ticket_links{$ticket->Id} ){
  (<a class="announcements_detail" href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">more</a>)
 %}

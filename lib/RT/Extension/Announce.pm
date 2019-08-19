@@ -220,6 +220,10 @@ in your RT_SiteConfig.pm:
 Set this to true to show announcements on the self service page as well as
 the regular privileged RT page.
 
+=head2 C<$RTAnnounceAllowHTML>
+
+If set to true, the banner content will be set to 'text/html' and allow HTML rendering.
+
 =head1 AUTHOR
 
 Best Practical Solutions, LLC E<lt>modules@bestpractical.comE<gt>
