@@ -2,7 +2,7 @@ NAME
     RT-Extension-Announce - Display announcements as a banner on RT pages.
 
 RT VERSION
-    Works with RT 4.0 and 4.2.
+    Works with RT 4.0, 4.2 and 4.4.
 
 INSTALLATION
     perl Makefile.PL
@@ -112,6 +112,13 @@ CONFIGURATION
   $ShowAnnouncementsInSelfService
     Set this to true to show announcements on the self service page as well
     as the regular privileged RT page.
+
+  $RTAnnounceAllowHTML
+    If set to true, the banner content will be set to 'text/html' and allow
+    HTML rendering. If the content of the banner is rather large there is an
+    option to wrap the content in overflow divs. By wrapping any content in
+    the following: <div class="RTAnnounceBannerOverflow"></div> the content
+    within the divs will be available as scrollable overflow content.
 
 AUTHOR
     Best Practical Solutions, LLC <modules@bestpractical.com>

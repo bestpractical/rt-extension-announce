@@ -82,3 +82,12 @@ table.announce td.date {
   font-size: smaller;
   color: #777;
 }
+
+.RTAnnounceBannerOverflow {
+  height: 0px;
+  white-space: nowrap;
+}
+
+.RTAnnounceScrollable {
+  overflow: auto;
+}
