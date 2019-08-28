@@ -222,7 +222,10 @@ the regular privileged RT page.
 
 =head2 C<$RTAnnounceAllowHTML>
 
-If set to true, the banner content will be set to 'text/html' and allow HTML rendering.
+If set to true, the banner content will be set to 'text/html' and allow HTML rendering. If the content of
+the banner is rather large there is an option to wrap the content in overflow divs. By wrapping any content in
+the following: C<<div class="RTAnnounceBannerOverflow"></div>> the content within the divs will be available as
+scrollable overflow content.
 
 =head1 AUTHOR
 
