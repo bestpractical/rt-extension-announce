@@ -117,6 +117,11 @@ CONFIGURATION
     If set to true, the banner content will be set to 'text/html' and allow
     HTML rendering.
 
+  $RTAnnounceLineCountLimit
+    Set the number of lines that should be displayed in the RT announce
+    banner, if the displayed lines exceed the line limit a scroll box
+    feature will be available.
+
 AUTHOR
     Best Practical Solutions, LLC <modules@bestpractical.com>
 

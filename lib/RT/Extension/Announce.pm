@@ -224,6 +224,11 @@ the regular privileged RT page.
 
 If set to true, the banner content will be set to 'text/html' and allow HTML rendering.
 
+=head2 C<$RTAnnounceLineCountLimit>
+
+Set the number of lines that should be displayed in the RT announce banner, if the displayed lines exceed
+the line limit a scroll box feature will be available.
+
 =head1 AUTHOR
 
 Best Practical Solutions, LLC E<lt>modules@bestpractical.comE<gt>

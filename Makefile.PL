@@ -2,6 +2,8 @@ use inc::Module::Install;
 
 RTx 'RT-Extension-Announce';
 
+requires 'Mojo::Dom';
+
 repository('https://github.com/bestpractical/rt-extension-announce');
 
 my ($lp) = ($INC{'RT.pm'} =~ /^(.*)[\\\/]/);

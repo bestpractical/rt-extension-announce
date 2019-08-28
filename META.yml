@@ -22,6 +22,7 @@ no_index:
     - static
     - xt
 requires:
+  Mojo::Dom: 0
   perl: 5.8.3
 resources:
   license: http://opensource.org/licenses/gpl-license.php

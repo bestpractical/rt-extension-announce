@@ -78,12 +78,69 @@
     $content =~ s/\s+$//g; # Remove trailing space
     $content .= chr(8230); # Ellipsis character
   }
+
+  use Mojo::Dom;
+  my $dom = Mojo::DOM->new( $content );
+
+  my @lines;
+  if ( $show_html ) {
+    for my $line ( $dom->find('*')->map('text')->each ) {
+      # We do not care about strings with only white space
+      next unless $line =~ /\S/;
+
+      # Find the HTML element matching our text, not just the text component
+      my $matches = $dom->find('*')->grep(sub { $_->all_text =~ /$line/ });
+      unless ( $matches->size ) {
+        RT::Logger->error("Could not find HTML component matching text content: $line");
+        next;
+      }
+      foreach my $match ( $matches->each ) {
+        # We do not want to grab any parent elements
+        next if $match->children->size;
+        push @lines, $match->to_string;
+
+        # Remove the current node so that we do not end up with duplicates
+        $dom = $match->remove->root;
+        # No need to continue looking for matching elements
+        last;
+      }
+    }
+  } else {
+    # Split just on line breaks
+    @lines = split ( "\n", $content );
+  }
+  my $line_count_limit = RT::Config->Get('RTAnnounceLineCountLimit');
+  if ( $line_count_limit && scalar @lines > $line_count_limit && $show_html ) {
+    # This is our overflow content that will be cutoff in the scroll box
+    my $dom_cutoff = Mojo::DOM->new();
+
+    my $count = 0;
+    for my $line ( @lines ) {
+      if ( $count eq $line_count_limit ) {
+        # Placeholder element to be replaced with overflow CSS div
+        $dom_cutoff = $dom_cutoff->append_content( '<p id="RTAnnounceOverflowStart">' );
+      }
+      $dom_cutoff = $dom_cutoff->append_content( $line );
+      $count = $count + 1;
+    }
+    # Wrap our content in a scrollable div since we have more lines than we want to display
+    $content = $dom_cutoff->content;
+
+    # Replace our placeholder element with the overflow div
+    $content =~ s/\<p id="RTAnnounceOverflowStart"\>\<\/p\>/\<div class="RTAnnounceBannerOverflow overflow-ellipsis"\>/;
+
+    # Close the overflow div at the end of the content
+    $content .= '</div>';
+  }
+
 </%perl>
+<div class="RTAnnounceScrollable">
 % if ( $show_html ) {
   <% $content |n %>
 % } else {
   <% $content %>
 % }
+</div>
 %if( $show_ticket_links{$ticket->Id} ){
  (<a class="announcements_detail" href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">more</a>)
 %}
