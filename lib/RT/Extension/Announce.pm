@@ -229,6 +229,12 @@ If set to true, the banner content will be set to 'text/html' and allow HTML ren
 Set the number of lines that should be displayed in the RT announce banner, if the displayed lines exceed
 the line limit a scroll box feature will be available.
 
+=head2 C<$RTAnnounceAdvancedMode>
+
+When this configuration is enabled the C<$RTAnnounceLineCountLimit> will not be taken into account, instead the
+following opening and corresponding closing '<div class="RTAnnounceBannerOverflow"></div>' should be used to wrap the
+overflow content.
+
 =head1 AUTHOR
 
 Best Practical Solutions, LLC E<lt>modules@bestpractical.comE<gt>

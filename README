@@ -122,6 +122,12 @@ CONFIGURATION
     banner, if the displayed lines exceed the line limit a scroll box
     feature will be available.
 
+  $RTAnnounceAdvancedMode
+    When this configuration is enabled the $RTAnnounceLineCountLimit will
+    not be taken into account, instead the following opening and
+    corresponding closing '<div class="RTAnnounceBannerOverflow"></div>'
+    should be used to wrap the overflow content.
+
 AUTHOR
     Best Practical Solutions, LLC <modules@bestpractical.com>
 
