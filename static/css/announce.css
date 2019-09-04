@@ -86,8 +86,17 @@ table.announce td.date {
 .RTAnnounceBannerOverflow {
   height: 0px;
   white-space: nowrap;
+  margin-right: -5px;
 }
 
 .RTAnnounceScrollable {
   overflow: auto;
+  -ms-overflow-style: none; /* IE 11 */
+  scrollbar-width: none; /* Firefox 64 */
+}
+
+/* Chrome */
+.RTAnnounceScrollable::-webkit-scrollbar {
+  width: 0px;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
 }
