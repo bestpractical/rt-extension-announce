@@ -220,6 +220,17 @@ in your RT_SiteConfig.pm:
 Set this to true to show announcements on the self service page as well as
 the regular privileged RT page.
 
+=head2 C<$RTAnnounceAllowHTML>
+
+If set to true, the banner content will be set to 'text/html' and allow HTML rendering.
+
+If the content of the message is large there is an option to wrap the content
+in overflow divs. In the source HTML of the message, wrap the bottom part of the message
+in the following: C<E<lt>div class="RTAnnounceBannerOverflow"E<gt>E<lt>/divE<gt>>.
+The top part of the message will be shown with a scrollbar and the part contained in
+the div will be hidden. Users can view the bottom section by scrolling without taking
+up too much room at the top of the page.
+
 =head1 AUTHOR
 
 Best Practical Solutions, LLC E<lt>modules@bestpractical.comE<gt>
