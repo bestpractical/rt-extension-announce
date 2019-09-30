@@ -50,7 +50,7 @@
 <table class="announce">
 %my $rows = 1;
 %foreach my $ticket ( @tickets ){
-  <tr><td class="announce_subject">
+  <tr><td class="announce_subject announce_cell">
 % if( $show_ticket_links{$ticket->Id} ){
   <a class="announce_subject"
      href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">
@@ -59,7 +59,7 @@
   <% $ticket->Subject %>
 % }
   </td>
-  <td>
+  <td class="announce_cell">
 <%perl>
   my $txns = $ticket->Transactions;
   for my $type ( qw(Create Correspond) ){
@@ -91,7 +91,7 @@
  (<a class="announcements_detail" href="<% RT->Config->Get('WebPath') %>/Ticket/Display.html?id=<% $ticket->Id %>">more</a>)
 %}
 </td>
-<td class="date">
+<td class="date announce_cell">
 <% $ticket->LastUpdatedObj->AsString %>
 </td>
 </tr>
