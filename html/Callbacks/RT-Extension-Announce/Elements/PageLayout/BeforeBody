@@ -78,7 +78,7 @@
 % if( $rows == $ShowTickets && (scalar @tickets) > $ShowTickets ){
 %   # More announcements, initially hidden.
 <tr><td colspan=2 class="toggle_announcements">
-<a href='#' class="toggle_announcements" id="toggle_announcements">More Announcements</a>
+<a data-text-more="<% loc('More Announcements') %>" data-text-less="<% loc('Less Announcements') %>" href='#' class="toggle_announcements" id="toggle_announcements">More Announcements</a>
 </td>
 </tr>
 <tbody id="more_announcements">
