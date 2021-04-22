@@ -85,7 +85,7 @@
 % }
 %$rows++;
 %}
-%if( $rows >= $ShowTickets ){
+%if( scalar @tickets > $ShowTickets ){
 </tbody>
 %}
 </table></div>
