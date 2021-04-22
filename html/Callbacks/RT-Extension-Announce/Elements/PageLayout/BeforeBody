@@ -108,7 +108,6 @@ return if @tickets == 0;
 my %show_ticket_links;
 my %content;
 my $show_html     = RT::Config->Get('RTAnnounceAllowHTML')    || 0;
-my $advanced_mode = RT::Config->Get('RTAnnounceAdvancedMode') || 0;
 
 my $who = $session{CurrentUser}->Name;
 foreach my $ticket ( @tickets ){
