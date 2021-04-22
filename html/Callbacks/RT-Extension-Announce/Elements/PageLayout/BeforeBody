@@ -60,31 +60,11 @@
 % }
   </td>
   <td class="announce_cell">
-<%perl>
-  my $txns = $ticket->Transactions;
-  for my $type ( qw(Create Correspond) ){
-      $txns->Limit( FIELD => 'Type', VALUE => $type );
-  }
-  $txns->OrderBy( FIELD => 'Created', ORDER => 'DESC' );
-  $txns->RowsPerPage(1);
-
-  my $show_html = RT::Config->Get('RTAnnounceAllowHTML') || 0;
-  my $advanced_mode = RT::Config->Get('RTAnnounceAdvancedMode') || 0;
-  my $content = $show_html ? $txns->First->Content(Type => 'text/html') : $txns->First->Content(Type => 'text/plain');
-
-  if( length $content > $MaxMessageLength ){
-    $content = substr($content, 0, $MaxMessageLength);
-    # Try to break at a word boundary.
-    $content =~ s/^(.*)\b\w+$/$1/g;
-    $content =~ s/\s+$//g; # Remove trailing space
-    $content .= chr(8230); # Ellipsis character
-  }
-</%perl>
 <div id="RTAnnounceScrollable" class="RTAnnounceScrollable">
 % if ( $show_html ) {
-  <% $content |n %>
+  <% $content{$ticket->Id} |n %>
 % } else {
-  <% $content %>
+  <% $content{$ticket->Id} %>
 % }
 </div>
 %if( $show_ticket_links{$ticket->Id} ){
@@ -126,6 +106,9 @@ return if @tickets == 0;
 
 # Don't show links if users can't view the announce tickets.
 my %show_ticket_links;
+my %content;
+my $show_html     = RT::Config->Get('RTAnnounceAllowHTML')    || 0;
+my $advanced_mode = RT::Config->Get('RTAnnounceAdvancedMode') || 0;
 
 my $who = $session{CurrentUser}->Name;
 foreach my $ticket ( @tickets ){
@@ -138,6 +121,25 @@ foreach my $ticket ( @tickets ){
           . "the ShowTicket right for ticket " . $ticket->Id . "  and will not see links to "
           . 'this announcement ticket.');
     }
+
+    my $txns = $ticket->Transactions;
+    for my $type (qw(Create Correspond)) {
+        $txns->Limit( FIELD => 'Type', VALUE => $type );
+    }
+    $txns->OrderBy( FIELD => 'Created', ORDER => 'DESC' );
+    $txns->RowsPerPage(1);
+
+    my $content
+        = $show_html ? $txns->First->Content( Type => 'text/html' ) : $txns->First->Content( Type => 'text/plain' );
+
+    if ( length $content > $MaxMessageLength ) {
+        $content = substr( $content, 0, $MaxMessageLength );
+        # Try to break at a word boundary.
+        $content =~ s/^(.*)\b\w+$/$1/g;
+        $content =~ s/\s+$//g;            # Remove trailing space
+        $content .= chr(8230);            # Ellipsis character
+    }
+    $content{$ticket->Id} = $content;
 }
 
 </%INIT>
