@@ -174,7 +174,7 @@ the last updated time and will move the announcement to the top of the list.
 
 The RTAnnounce queue has a custom field called 'Announcement Groups' which
 you can use to manage who will see an announcement. If you set no value, all
-users will see the announcement. If you set one or more RT groups, only memebers
+users will see the announcement. If you set one or more RT groups, only members
 of those groups will see it.
 
 =head1 PERMISSIONS
