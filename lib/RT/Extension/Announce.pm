@@ -188,7 +188,7 @@ of those groups will see it.
 
 =head1 PERMISSIONS
 
-By default, the announements are static text. If you give
+By default, the announcements are static text. If you give
 users the ShowTicket right on the RTAnnounce queue, the announcements
 will have links to the source tickets. This will allow users to see the
 history of an announcement or see longer messages that might be
@@ -204,6 +204,12 @@ announcement messages to an email list,
 you could create a list user in RT and add it as a CC to the announcement
 queue. Then messages posted for announcement in RT will also be sent to the
 notification list.
+
+=head1 RT-Extension-FormTools
+
+If you would like to show announcements on FormTools form pages look at the
+configuration option C<$ShowAnnouncementsInFormTools> in the CONFIGURATION
+section below.
 
 =head1 CONFIGURATION
 
@@ -239,6 +245,31 @@ in the following: C<E<lt>div class="RTAnnounceBannerOverflow"E<gt>E<lt>/divE<gt>
 The top part of the message will be shown with a scrollbar and the part contained in
 the div will be hidden. Users can view the bottom section by scrolling without taking
 up too much room at the top of the page.
+
+=head2 C<$ShowAnnouncementsInFormTools>
+
+Set this to true to show announcements on FormTools pages.
+
+You will need to add a custom field to the queue used for announcements.
+
+First update the C<@CustomFieldValuesSources> config setting to the following:
+
+    Set(@CustomFieldValuesSources, (qw(RT::CustomFieldValues::AnnounceGroups RT::CustomFieldValues::FormToolsGroups)));
+
+Then add create a new custom field and apply it to the queue used for
+announcements:
+
+    Name:                Announcement FormTools Groups
+    Type:                Select multiple values
+    Field values source: RT user defined FormTools groups for the RT Announce plugin
+    Applies to:          Tickets
+
+When creating a new announcement ticket select values in the new custom field to
+control where the announcement will be displayed.
+
+If the custom field is left empty the announcement will only display on the
+homepage. If one or more values are selected the announcement will only display
+for the values selected.
 
 =head1 AUTHOR
 
