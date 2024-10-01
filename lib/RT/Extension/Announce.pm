@@ -8,7 +8,8 @@ RT->AddJavaScript('announce.js');
 RT->AddStyleSheets('announce.css');
 
 sub GetAnnouncements {
-    my $current_user = shift;
+    my $current_user     = shift;
+    my $form_tools_group = shift || 'RT Homepage';
 
     my $AnnounceQueue = RT->Config->Get('RTAnnounceQueue') || 'RTAnnounce';
     my $Queue = RT::Queue->new( RT->SystemUser );
@@ -28,7 +29,15 @@ sub GetAnnouncements {
     my @statuses = $Queue->ActiveStatusArray();
     @statuses = map { s/(['\\])/\\$1/g; "Status = '$_'" } @statuses;
     my $status_query = join( ' OR ', @statuses );
-    $tickets->FromSQL("Queue = '$AnnounceQueue' AND ( $status_query )");
+    my $ticket_sql = "Queue = '$AnnounceQueue' AND ( $status_query )";
+    if ( RT->Config->Get('ShowAnnouncementsInFormTools') && RT->Config->Get('FormToolsEnableGroups') ) {
+        my @form_groups = ( "'CF.{Announcement FormTools Groups}' = '$form_tools_group'" );
+        if ( $form_tools_group eq 'RT Homepage' ) {
+            push @form_groups, "'CF.{Announcement FormTools Groups}' IS NULL";
+        }
+        $ticket_sql .= ' AND (  ' . join( ' OR ', @form_groups ) . '  )';
+    }
+    $tickets->FromSQL($ticket_sql);
     return if $tickets->Count == 0;
 
     my $who = $current_user->Name;
