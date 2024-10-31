@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package RT::Extension::Announce;
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 RT->AddJavaScript('announce.js');
 RT->AddStyleSheets('announce.css');
@@ -287,7 +287,7 @@ or via the web at
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2012-2020 by Best Practical Solutions, LLC
+This software is Copyright (c) 2012-2024 by Best Practical Solutions, LLC
 
 This is free software, licensed under:
 
