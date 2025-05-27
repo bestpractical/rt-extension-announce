@@ -92,6 +92,54 @@ sub GetAnnouncements {
     return @tickets;
 }
 
+if ( RT->Config->can('RegisterPluginConfig') ) {
+    RT->Config->RegisterPluginConfig(
+        Plugin  => 'Announce',
+        Content => [
+            {
+                Name => 'RTAnnounceQueue',
+                Help => 'https://metacpan.org/pod/RT::Extension::Announce#$RTAnnounceQueue',
+            },
+            {
+                Name => 'AnnounceGroups',
+                Help => 'https://metacpan.org/pod/RT::Extension::Announce#@AnnounceGroups',
+            },
+            {
+                Name => 'ShowAnnouncementsInSelfService',
+                Help => 'https://metacpan.org/pod/RT::Extension::Announce#$ShowAnnouncementsInSelfService',
+            },
+            {
+                Name => 'RTAnnounceAllowHTML',
+                Help => 'https://metacpan.org/pod/RT::Extension::Announce#$RTAnnounceAllowHTML',
+            },
+            {
+                Name => 'ShowAnnouncementsInFormTools',
+                Help => 'https://metacpan.org/pod/RT::Extension::Announce#$ShowAnnouncementsInFormTools',
+            },
+        ],
+        Meta    => {
+            RTAnnounceQueue => {
+                Type   => 'SCALAR',
+                Widget => '/Widgets/Form/String',
+            },
+            AnnounceGroups => {
+                Type => 'ARRAY',
+            },
+            ShowAnnouncementsInSelfService => {
+                Type   => 'SCALAR',
+                Widget => '/Widgets/Form/Boolean',
+            },
+            RTAnnounceAllowHTML => {
+                Type   => 'SCALAR',
+                Widget => '/Widgets/Form/Boolean',
+            },
+            ShowAnnouncementsInFormTools => {
+                Type   => 'SCALAR',
+                Widget => '/Widgets/Form/Boolean',
+            },
+        }
+    );
+}
 
 =head1 NAME
 
