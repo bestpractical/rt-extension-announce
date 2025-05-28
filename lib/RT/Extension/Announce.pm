@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package RT::Extension::Announce;
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 RT->AddJavaScript('announce.js');
 RT->AddStyleSheets('announce.css');
